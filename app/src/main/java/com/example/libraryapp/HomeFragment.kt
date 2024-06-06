@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.libraryapp.databinding.FragmentHomeBinding
 import io.github.g00fy2.quickie.ScanQRCode
 import io.github.g00fy2.quickie.QRResult
@@ -26,6 +28,12 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,11 +47,12 @@ class HomeFragment : Fragment() {
 
 
 
-//    TODO()
+
         getBooks(userID)
 
         binding.openQrCodeScannerBtn.setOnClickListener { scanQRCodeLauncher.launch(null) }
     }
+
 
     private fun addBook(userID: String, bookID: String) {
         val retrofit = Retrofit.Builder()
@@ -64,6 +73,10 @@ class HomeFragment : Fragment() {
                 response: Response<BooksResponse>
             ) {
                 books = response.body() ?: BooksResponse()
+
+                binding.booksRecycler.layoutManager = LinearLayoutManager(activity)
+                binding.booksRecycler.setHasFixedSize(true)
+                binding.booksRecycler.adapter = BookAdapter(books)
             }
 
             override fun onFailure(call: Call<BooksResponse>, t: Throwable) {
@@ -86,7 +99,10 @@ class HomeFragment : Fragment() {
                 response: Response<BooksResponse?>
             ) {
                 books = response.body() ?: BooksResponse()
-                Log.d("fetch", books.toString())
+
+                binding.booksRecycler.layoutManager = LinearLayoutManager(activity)
+                binding.booksRecycler.setHasFixedSize(true)
+                binding.booksRecycler.adapter = BookAdapter(books)
             }
 
             override fun onFailure(call: Call<BooksResponse?>, t: Throwable) {

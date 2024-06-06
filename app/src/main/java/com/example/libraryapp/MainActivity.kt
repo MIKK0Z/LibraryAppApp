@@ -11,13 +11,15 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.libraryapp.databinding.ActivityMainBinding
 
-//const val BASE_URL = "https://library-app-mikey.netlify.app/"
-const val BASE_URL = "http://192.168.0.106:5173/"
+const val BASE_URL = "https://library-app-mikey.netlify.app/"
+//const val BASE_URL = "http://192.168.0.106:5173/"
 
 var userID = ""
 var userLogin = ""
 
 var books: BooksResponse = BooksResponse()
+
+var deleteBook: ((userID: String, bookID: String) -> Void)? = null
 
 class MainActivity : AppCompatActivity() {
 

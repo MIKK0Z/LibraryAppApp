@@ -16,4 +16,7 @@ interface ApiInterface {
 
     @POST("addBook")
     fun addBook(@Body body: Map<String, String>): Call<BooksResponse>
+
+    @POST
+    fun deleteBook(@Body body: Map<String, String>): Call<BooksResponse>
 }
