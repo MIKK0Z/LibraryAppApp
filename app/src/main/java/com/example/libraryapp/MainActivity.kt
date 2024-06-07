@@ -17,7 +17,7 @@ const val BASE_URL = "https://library-app-mikey.netlify.app/"
 var userID = ""
 var userLogin = ""
 
-var books: BooksResponse = BooksResponse()
+var books: List<BooksResponseItem> = BooksResponse()
 
 var deleteBook: ((userID: String, bookID: String) -> Void)? = null
 
