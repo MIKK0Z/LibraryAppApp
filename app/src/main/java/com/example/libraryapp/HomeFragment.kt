@@ -28,10 +28,14 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private val scanQRCodeRemove = registerForActivityResult(ScanQRCode()) { result ->
+        if (result is QRResult.QRSuccess) {
+            removeBook(userID, result.content.rawValue.toString())
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
     }
 
     override fun onCreateView(
@@ -45,12 +49,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
-
         getBooks(userID)
 
         binding.openQrCodeScannerBtn.setOnClickListener { scanQRCodeLauncher.launch(null) }
+        binding.removeQrBtn.setOnClickListener { scanQRCodeRemove.launch(null) }
     }
 
 
@@ -98,6 +100,39 @@ class HomeFragment : Fragment() {
                 call: Call<BooksResponse?>,
                 response: Response<BooksResponse?>
             ) {
+                books = response.body() ?: BooksResponse()
+
+                binding.booksRecycler.layoutManager = LinearLayoutManager(activity)
+                binding.booksRecycler.setHasFixedSize(true)
+                binding.booksRecycler.adapter = BookAdapter(books)
+            }
+
+            override fun onFailure(call: Call<BooksResponse?>, t: Throwable) {
+                Log.d("fetch", "books fetch failed")
+            }
+        })
+    }
+
+    private fun removeBook(userID: String, bookID: String) {
+        val retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)
+            .build()
+
+        val apiService = retrofit.create(ApiInterface::class.java)
+
+        val body = mapOf(
+            "userID" to userID,
+            "bookID" to bookID,
+        )
+
+        apiService.deleteBook(body).enqueue(object: Callback<BooksResponse?> {
+            override fun onResponse(
+                call: Call<BooksResponse?>,
+                response: Response<BooksResponse?>
+            ) {
+                Log.d("test", "trolaz")
+
                 books = response.body() ?: BooksResponse()
 
                 binding.booksRecycler.layoutManager = LinearLayoutManager(activity)
